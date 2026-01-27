@@ -241,13 +241,15 @@ function calcular() {
   const riesgoPorContrato = slTics * contrato.tickValue;
   const contratos = Math.floor(riesgoUSD / riesgoPorContrato);
   if (contratos < 1) {
-  alert(
-    "⚠️ El riesgo configurado no alcanza para 1 contrato.\n" +
-    "Reduce el SL o aumenta el riesgo %."
-  );
+  document.getElementById("contratosResult").textContent =
+    "❌ El riesgo no alcanza para 1 contrato.";
+  document.getElementById("rrResult").textContent =
+    "Reduce el SL o aumenta el riesgo %.";
+  document.getElementById("profitResult").textContent = "";
+  document.getElementById("lossResult").textContent = "";
+  document.getElementById("resultCard").style.display = "block";
   return;
   }
-
   
   const profit = tpTics * contrato.tickValue * contratos;
   const loss = slTics * contrato.tickValue * contratos;
