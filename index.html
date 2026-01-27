@@ -249,6 +249,7 @@ function calcular() {
   document.getElementById("profitResult").textContent = "";
   document.getElementById("lossResult").textContent = "";
   document.getElementById("resultCard").style.display = "block";
+  document.getElementById("container").style.justifyContent = "flex-start";
   return;
   }
   
@@ -268,7 +269,7 @@ function calcular() {
   document.getElementById("lossResult").textContent =
     `Pérdida estimada: -$${loss.toFixed(2)}`;
 
-  document.getElementById("resultCard").style.display = "block";
+    document.getElementById("resultCard").style.display = "block";
 }
 </script>
 
