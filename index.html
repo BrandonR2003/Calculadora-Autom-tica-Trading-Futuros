@@ -240,7 +240,15 @@ function calcular() {
   const riesgoUSD = capital * (riesgoPct / 100);
   const riesgoPorContrato = slTics * contrato.tickValue;
   const contratos = Math.floor(riesgoUSD / riesgoPorContrato);
+  if (contratos < 1) {
+  alert(
+    "⚠️ El riesgo configurado no alcanza para 1 contrato.\n" +
+    "Reduce el SL o aumenta el riesgo %."
+  );
+  return;
+  }
 
+  
   const profit = tpTics * contrato.tickValue * contratos;
   const loss = slTics * contrato.tickValue * contratos;
   const rr = (tpTics / slTics).toFixed(2);
