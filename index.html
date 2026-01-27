@@ -232,10 +232,11 @@ function calcular() {
   const contratoKey = document.getElementById("contract").value;
   const contrato = FUTUROS[contratoKey];
 
-  if (!entrada || !tpTics || !slTics) {
-    alert("Completa todos los campos");
-    return;
+  if (!tpTics || !slTics) {
+  alert("Introduce TP y SL en tics");
+  return;
   }
+
 
   const riesgoUSD = capital * (riesgoPct / 100);
   const riesgoPorContrato = slTics * contrato.tickValue;
