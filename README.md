@@ -1,1 +1,0 @@
-# Calculadora-Autom-tica-Trading-Futuros
