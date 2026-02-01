@@ -383,6 +383,8 @@ const profitMaxPermitido =
 
   let ticsNivelAnterior = ticsBE;
 
+  let ultimaFila = null;
+
 for (let nivel = 1; ; nivel++) {
 
   const objetivoUSD = pasoUSD * nivel;
@@ -413,18 +415,28 @@ for (let nivel = 1; ; nivel++) {
   const claseFinal =
     ticsObjetivo <= tpTics ? "tp-final-row" : "";
 
-  tbody.insertAdjacentHTML("beforeend", `
-    <tr class="${claseFinal}">
-      <td>${nivel}</td>
-      <td>${(nivel * riesgoPct).toFixed(2)}%</td>
-      <td>${ticsObjetivo}</td>
-      <td>${precioTP.toFixed(dec)}</td>
-      <td>$${profitNetoNivel.toFixed(2)}</td>
-    </tr>
-  `);
+  const filaHTML = `
+  <tr>
+    <td>${nivel}</td>
+    <td>${(nivel * riesgoPct).toFixed(2)}%</td>
+    <td>${ticsObjetivo}</td>
+    <td>${precioTP.toFixed(dec)}</td>
+    <td>$${profitNetoNivel.toFixed(2)}</td>
+  </tr>
+`;
+
+tbody.insertAdjacentHTML("beforeend", filaHTML);
+  
+// guardamos referencia a la última fila insertada
+ultimaFila = tbody.lastElementChild;
+
 
   // 🔑 avanzamos al siguiente umbral REAL
   ticsNivelAnterior = ticsObjetivo;
+}
+
+if (ultimaFila) {
+  ultimaFila.classList.add("tp-final-row");
 }
   
   // --- OUTPUT ---
