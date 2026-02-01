@@ -168,13 +168,48 @@
 
       <label for="symbol">Activo:</label>
       <select id="symbol">
-        <option value="ES">ES</option>
-        <option value="MES">MES</option>
-        <option value="NQ">NQ</option>
-        <option value="YM">YM</option>
-        <option value="RTY">RTY</option>
-        <option value="CL">CL</option>
-        <option value="GC">GC</option>
+        <option value="ES">ES (E-MINI S&P 500)</option>
+        <option value="MES">MES (MICRO S&P 500)</option>
+        <option value="NQ">NQ (E-MINI NASDAQ)</option>
+        <option value="MNQ">MNQ (MICRO NASDAQ)</option>
+        <option value="RTY">RTY (E-MINI RUSSELL)</option>
+        <option value="M2K">M2K (MICRO RUSSELL)</option>
+        <option value="HE">HE (LEAN HOG)</option>
+        <option value="LE">LE (LIVE CATTLE)</option>
+        <option value="6A">6A (AUSTRALIAN DOLLAR)</option>
+        <option value="M6A">M6A (E-MICRO AUD/USD)</option>
+        <option value="6B">6B (BRITISH POUND)</option>
+        <option value="6C">6C (CANADIAN DOLLAR)</option>
+        <option value="6E">6E (EURO)</option>
+        <option value="M6E">M6E (E-MICRO EUR/USD)</option>
+        <option value="6J">6J (JAPANESE YEN)</option>
+        <option value="6N">6N (NEW ZEALAND)</option>
+        <option value="6S">6S (SWISS FRANC)</option>
+        <option value="YM">YM (E-MINI DOW JONES INDEX)</option>
+        <option value="MYM">MYM (MICRO E-MINI DOW JONES INDEX)</option>
+        <option value="ZC">ZC (CORN)</option>
+        <option value="ZL">ZL (SOYBEAN OIL)</option>
+        <option value="ZM">ZM (SOYBEAN MEAL)</option>
+        <option value="ZS">ZS (SOYBEAN)</option>
+        <option value="ZW">ZW (WHEAT)</option>
+        <option value="GC">GC (COMEX 100 GOLD)</option>
+        <option value="QO">QO (E-MINI GOLD)</option>
+        <option value="MGC">MGC (10 TROY OZ GOLD)</option>
+        <option value="HG">HG (COMEX COPPER)</option>
+        <option value="MHG">MHG (MICRO COPPER)</option>
+        <option value="SI">SI (COMEX 5000 SILVER)</option>
+        <option value="CL">CL (CRUDE OIL)</option>
+        <option value="QM">QM (E-MINI CRUDE OIL)</option>
+        <option value="MCL">MCL (MICRO CRUDE OIL)</option>
+        <option value="NG">NG (NATURAL GAS HENRY HUB)</option>
+        <option value="QG">QG (E-MINI NATURAL GAS)</option>
+        <option value="RB">RB (RBOB GASOLINE)</option>
+        <option value="QI">QI (COMEX MINY SILVER)</option>
+        <option value="GF">GF (FEEDER CATTLE)</option>
+        <option value="MBT">MBT (MICRO BITCOIN)</option>
+        <option value="MET">MET (MICRO ETHER)</option>
+        <option value="EMD">EMD (E-MINI MIDCAP)</option>
+        <option value="HO">HO (NY HARBOR ULSD)</option>
       </select>
 
 
@@ -270,8 +305,8 @@
 <script>
 
   const activosPorCuenta = {
-  FN: ["ES", "MES", "YM", "RTY", "CL", "GC"],
-  APEX: ["ES", "MES", "NQ", "YM", "RTY", "CL", "GC"]
+  FN: ["ES", "MES", "NQ", "MNQ", "RTY", "M2K", "HE", "LE", "6A", "M6A", "6B", "6C", "6E", "6J", "6N", "6S", "YM", "MYM", "ZC", "ZL", "ZM", "ZS", "ZW", "GC", "MGC", "HG", "MHG", "SI", "CL", "QM", "MCL", "NG", "QG", "RB"],
+  APEX: ["EMD", "ES", "MES", "NQ", "MNQ", "RTY", "M2K", "MBT", "MET", "GF", "HE", "LE", "6A", "M6A", "6B", "6C", "6E", "M6E", "6J", "6N", "6S", "YM", "MYM", "ZC", "ZL", "ZM", "ZS", "ZW", "GC", "QO", "MGC", "HG", "QI", "SI", "CL", "QM", "MCL", "HO", "NG", "QG", "RB"]
 };
 
   function actualizarActivos() {
@@ -320,13 +355,48 @@ function calcular() {
   }
 
   const activos = {
+    EMD:{ tickSize: 0.10, tickValue: 0.00, comision: { APEX: 1.0, FN: 0.00 }, dec: 1 },
     ES: { tickSize: 0.25, tickValue: 12.5, comision: { APEX: 3.10, FN: 5.76 }, dec: 2 },
     MES: { tickSize: 0.25, tickValue: 1.25, comision: { APEX: 1.04, FN: 1.90 }, dec: 2 },
     NQ: { tickSize: 0.25, tickValue: 5, comision: { APEX: 3.10, FN: 5.76 }, dec: 2 },
-    YM: { tickSize: 1, tickValue: 5, comision: { APEX: 3.10, FN: 5.76 }, dec: 0 },
+    MNQ: { tickSize: 0.25, tickValue: 0.5, comision: { APEX: 1.04, FN: 1.90 }, dec: 2 },
     RTY:{ tickSize: 0.1, tickValue: 5, comision: { APEX: 3.10, FN: 5.76 }, dec: 1 },
-    CL: { tickSize: 0.01, tickValue: 10, comision:{ APEX: 3.34, FN: 6.00 }, dec: 2 },
-    GC: { tickSize: 0.1, tickValue: 10, comision:{ APEX: 3.54, FN: 6.20 }, dec: 1 }
+    M2K:{ tickSize: 0.1, tickValue: 0.5, comision: { APEX: 1.04, FN: 1.9 }, dec: 1 },
+    MBT:{ tickSize: 5, tickValue: 0.50, comision: { APEX: 5.34, FN: 0.00 }, dec: 0 },
+    MET:{ tickSize: 0.5, tickValue: 0.05, comision: { APEX: 0.74, FN: 0.00 }, dec: 1 },
+    GF:{ tickSize: 0.03, tickValue: 12.50, comision: { APEX: 4.54, FN: 6.20 }, dec: 3 },
+    HE:{ tickSize: 0.03, tickValue: 10.0, comision: { APEX: 4.54, FN: 7.2 }, dec: 3 },
+    LE:{ tickSize: 0.03, tickValue: 10.0, comision: { APEX: 4.54, FN: 7.2 }, dec: 3 },
+    6A:{ tickSize: 0.00005, tickValue: 5.0, comision: { APEX: 3.54, FN: 6.2 }, dec: 5 },
+    M6A:{ tickSize: 0.0001, tickValue: 10.0, comision: { APEX: 0.82, FN: 1.68 }, dec: 4 },
+    6B:{ tickSize: 0.0001, tickValue: 6.25, comision: { APEX: 3.54, FN: 6.20 }, dec: 4 },
+    6C:{ tickSize: 0.00005, tickValue: 5.00, comision: { APEX: 3.54, FN: 6.20 }, dec: 5 },
+    6E:{ tickSize: 0.00005, tickValue: 6.25, comision: { APEX: 3.54, FN: 6.20 }, dec: 5 },
+    M6E:{ tickSize: 0.0001, tickValue: 1.25, comision: { APEX: 0.82, FN: 0.00 }, dec: 4 },
+    6J:{ tickSize: 0.0000005, tickValue: 6.25, comision: { APEX: 3.54, FN: 6.20 }, dec: 7 },
+    6N:{ tickSize: 0.00005, tickValue: 5.00, comision: { APEX: 3.54, FN: 6.20 }, dec: 5 },
+    6S:{ tickSize: 0.00005, tickValue: 6.25, comision: { APEX: 3.54, FN: 6.20 }, dec: 5 },
+    YM:{ tickSize: 1.00, tickValue: 5.00, comision: { APEX: 3.10, FN: 5.76 }, dec: 0 },
+    MYM:{ tickSize: 1.00, tickValue: 0.50, comision: { APEX: 1.04, FN: 1.90 }, dec: 0 },
+    ZC:{ tickSize: 0.25, tickValue: 12.50, comision: { APEX: 4.54, FN: 1.00 }, dec: 2 },
+    ZL:{ tickSize: 0.01, tickValue: 6.00, comision: { APEX: 4.54, FN: 7.20 }, dec: 2 },
+    ZM:{ tickSize: 0.1, tickValue: 10.00, comision: { APEX: 4.54, FN: 7.20 }, dec: 1 },
+    ZS:{ tickSize: 0.25, tickValue: 12.50, comision: { APEX: 4.54, FN: 0.00 }, dec: 2 },
+    ZW:{ tickSize: 0.25, tickValue: 12.50, comision: { APEX: 4.54, FN: 0.00 }, dec: 2 },
+    GC:{ tickSize: 0.1, tickValue: 10.00, comision: { APEX: 3.54, FN: 6.20 }, dec: 1 },
+    QO:{ tickSize: 0.25, tickValue: 12.50, comision: { APEX: 2.34, FN: 0.00 }, dec: 2 },
+    MGC:{ tickSize: 0.1, tickValue: 1.00, comision: { APEX: 1.34, FN: 2.40 }, dec: 1 },
+    HG:{ tickSize: 0.0005, tickValue: 12.50, comision: { APEX: 3.54, FN: 6.20 }, dec: 4 },
+    MHG:{ tickSize: 0.0005, tickValue: 1.25, comision: { APEX: 0.0, FN: 2.40 }, dec: 4 },
+    QI:{ tickSize: 0.0125, tickValue: 31.25, comision: { APEX: 2.34, FN: 0.00 }, dec: 4 },
+    SI:{ tickSize: 0.005, tickValue: 25.00, comision: { APEX: 3.54, FN: 6.20 }, dec: 3 },
+    CL:{ tickSize: 0.01, tickValue: 10.00, comision: { APEX: 3.54, FN: 6.00 }, dec: 2 },
+    QM:{ tickSize: 0.025, tickValue: 12.50, comision: { APEX: 2.74, FN: 5.40 }, dec: 3 },
+    MCL:{ tickSize: 0.01, tickValue: 1.00, comision: { APEX: 1.34, FN: 2.20 }, dec: 2 },
+    HO:{ tickSize: 0.05, tickValue: 1.25, comision: { APEX: 0.0, FN: 0.00 }, dec: 4 },
+    NG:{ tickSize: 0.001, tickValue: 10.00, comision: { APEX: 3.54, FN: 6.20 }, dec: 3 },
+    QG:{ tickSize: 0.005, tickValue: 12.50, comision: { APEX: 1.34, FN: 4.00 }, dec: 3 },
+    RB:{ tickSize: 0.0001, tickValue: 4.20, comision: { APEX: 3.34, FN: 6.00 }, dec: 4 },
   };
 
   const { tickSize, tickValue, comision, dec } = activos[activo];
