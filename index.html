@@ -160,116 +160,176 @@
 </head>
 
 <body>
-<div id="container">
+  <div id="container">
 
-  <!-- DATOS -->
-  <div class="card" id="inputCard">
-    <h2>DATOS</h2>
+    <!-- TARJETA DE DATOS -->
+    <div class="card" id="inputCard">
+      <h2>DATOS</h2>
 
-    <label>Contrato:</label>
-    <select id="contract">
-      <option value="M6E">Micro EUR/USD (M6E)</option>
-      <option value="6E">Euro FX (6E)</option>
-    </select>
+      <label for="symbol">Activo:</label>
+      <select id="symbol">
+        <option value="ES">ES</option>
+        <option value="NQ">NQ</option>
+        <option value="YM">YM</option>
+        <option value="RTY">RTY</option>
+        <option value="CL">CL</option>
+        <option value="GC">GC</option>
+      </select>
 
-    <label>Capital ($):</label>
-    <select id="capital">
-      <option value="25000">$25,000</option>
-      <option value="50000">$50,000</option>
-      <option value="100000">$100,000</option>
-    </select>
 
-    <label>Precio de Entrada:</label>
-    <input type="number" id="entrada" step="0.00001" />
+      <label for="comision">Tipo de Cuenta:</label>
+      <select id="comision">
+        <option value="FN">FN Futures</option>
+        <option value="APEX">Apex</option>
+      </select>
 
-    <label>Tipo de Orden:</label>
-    <select id="type">
-      <option value="buy">Buy</option>
-      <option value="sell">Sell</option>
-    </select>
 
-    <label>Tics TP:</label>
-    <input type="number" id="tpTics" />
+      <label for="capital">Capital ($):</label>
+      <select id="capital">
+        <option value="1000">$1,000</option>
+        <option value="5000">$5,000</option>
+        <option value="6000">$6,000</option>
+        <option value="10000">$10,000</option>
+        <option value="15000">$15,000</option>
+        <option value="20000">$20,000</option>
+        <option value="25000">$25,000</option>
+        <option value="50000">$50,000</option>
+        <option value="100000">$100,000</option>
+        <option value="200000">$200,000</option>
+      </select>
 
-    <label>Tics SL:</label>
-    <input type="number" id="slTics" />
+      <label for="entrada">Precio de Entrada:</label>
+      <input type="number" id="entrada" step="0.01" />
 
-    <label>Riesgo (%):</label>
-    <select id="riesgo">
-      <option value="1">1%</option>
-      <option value="0.5">0.50%</option>
-      <option value="0.25">0.25%</option>
-      <option value="0.10">0.10%</option>
-    </select>
+      <label for="type">Tipo de Orden:</label>
+      <select id="type">
+        <option value="buy">Buy</option>
+        <option value="sell">Sell</option>
+      </select>
 
-    <button onclick="calcular()">Calcular</button>
+      <label for="tpTics">Tics TP:</label>
+      <input type="number" inputmode="numeric" pattern="[0-9]" id="tpTics" step="1" />
+
+      <label for="slTics">Tics SL:</label>
+      <input type="number" inputmode="numeric" pattern="[0-9]" id="slTics" step="1" />
+
+      <label for="riesgo">Riesgo (%):</label>
+      <select id="riesgo">
+        <option value="1">1%</option>
+        <option value="0.5">0.50%</option>
+        <option value="0.33">0.33%</option>
+        <option value="0.25">0.25%</option>
+        <option value="0.20">0.20%</option>
+        <option value="0.15">0.15%</option>
+        <option value="0.125">0.125%</option>
+        <option value="0.10">0.10%</option>
+        <option value="0.05">0.05%</option>
+      </select>
+
+      <button onclick="calcular()">Calcular</button>
+    </div>
+
+    <!-- RESULTADOS -->
+    <div class="card" id="resultCard">
+      <h2>RESULTADOS</h2>
+      <br>
+      <div class="result" id="lotajeResult"></div>
+      <div class="result" id="rrResult"></div>
+      <div class="result" id="ComisionResult"></div>
+      <br>
+      <div class="result" id="tpPriceResult"></div>
+      <div class="result" id="profitResult"></div>
+      <br>
+      <div class="result" id="slPriceResult"></div>
+      <div class="result" id="lossResult"></div>
+    </div>
+
+    <!-- TP PARCIALES -->
+    <div class="card" id="tpCard">
+      <h2>TP PARCIALES</h2>
+      <br>
+      <table>
+        <thead>
+          <tr>
+            <th>R</th>
+            <th>%</th>
+            <th>Tics</th>
+            <th>Precio</th>
+            <th>Profit Neto</th>
+          </tr>
+        </thead>
+        <tbody id="tpTable"></tbody>
+      </table>
+    </div>
+
   </div>
-
-  <!-- RESULTADOS -->
-  <div class="card" id="resultCard">
-    <h2>RESULTADOS</h2>
-    <div class="result" id="contratosResult"></div>
-    <div class="result" id="rrResult"></div>
-    <div class="result" id="profitResult"></div>
-    <div class="result" id="lossResult"></div>
-  </div>
-
-</div>
 
 <script>
-const FUTUROS = {
-  M6E: { tickSize: 0.00005, tickValue: 0.625, margin: 50 },
-  6E:  { tickSize: 0.00005, tickValue: 6.25,  margin: 500 }
-};
-
 function calcular() {
   const capital = parseFloat(document.getElementById("capital").value);
   const riesgoPct = parseFloat(document.getElementById("riesgo").value);
   const entrada = parseFloat(document.getElementById("entrada").value);
-  const tpTics = parseInt(document.getElementById("tpTics").value);
-  const slTics = parseInt(document.getElementById("slTics").value);
+  const slTics = parseFloat(document.getElementById("slTics").value);
+  const tpTics = parseFloat(document.getElementById("tpTics").value);
   const tipo = document.getElementById("type").value;
-  const contratoKey = document.getElementById("contract").value;
-  const contrato = FUTUROS[contratoKey];
+  const activo = document.getElementById("symbol").value;
+  const cuenta = document.getElementById("comision").value;
 
-  if (!tpTics || !slTics) {
-  alert("Introduce TP y SL en tics");
-  return;
+  if (!slTics || !tpTics || slTics <= 0) {
+    alert("TP y SL inválidos");
+    return;
   }
 
+  const activos = {
+    ES: { tick: 0.25, value: 12.5, dec: 2 },
+    NQ: { tick: 0.25, value: 5, dec: 2 },
+    YM: { tick: 1, value: 5, dec: 0 },
+    RTY: { tick: 0.1, value: 5, dec: 1 },
+    CL: { tick: 0.01, value: 10, dec: 2 },
+    GC: { tick: 0.1, value: 10, dec: 1 }
+  };
+
+  const feePorContrato = cuenta === "FN" ? 2 : 3;
+  const { tick, value, dec } = activos[activo];
 
   const riesgoUSD = capital * (riesgoPct / 100);
-  const riesgoPorContrato = slTics * contrato.tickValue;
+  const riesgoPorContrato = slTics * value + feePorContrato;
   const contratos = Math.floor(riesgoUSD / riesgoPorContrato);
+
   if (contratos < 1) {
-  document.getElementById("contratosResult").textContent =
-    "❌ El riesgo no alcanza para 1 contrato.";
-  document.getElementById("rrResult").textContent =
-    "Reduce el SL o aumenta el riesgo %.";
-  document.getElementById("profitResult").textContent = "";
-  document.getElementById("lossResult").textContent = "";
-  document.getElementById("resultCard").style.display = "block";
-  document.getElementById("container").style.justifyContent = "flex-start";
-  return;
+    alert("Riesgo insuficiente para 1 contrato");
+    return;
   }
-  
-  const profit = tpTics * contrato.tickValue * contratos;
-  const loss = slTics * contrato.tickValue * contratos;
-  const rr = (tpTics / slTics).toFixed(2);
 
-  document.getElementById("contratosResult").textContent =
-    `Contratos: ${contratos}`;
+  const rr = tpTics / slTics;
 
-  document.getElementById("rrResult").textContent =
-    `Riesgo / Beneficio: 1:${rr}`;
+  const tpPrice = tipo === "buy"
+    ? entrada + tpTics * tick
+    : entrada - tpTics * tick;
 
-  document.getElementById("profitResult").textContent =
-    `Profit estimado: $${profit.toFixed(2)}`;
+  const slPrice = tipo === "buy"
+    ? entrada - slTics * tick
+    : entrada + slTics * tick;
 
-  document.getElementById("lossResult").textContent =
-    `Pérdida estimada: -$${loss.toFixed(2)}`;
+  const profitBruto = tpTics * value * contratos;
+  const lossBruto = slTics * value * contratos;
+  const comisionTotal = contratos * feePorContrato;
 
-    document.getElementById("resultCard").style.display = "block";
+  const profitNeto = profitBruto - comisionTotal;
+  const lossNeto = lossBruto + comisionTotal;
+
+  document.getElementById("lotajeResult").textContent = `Contratos: ${contratos}`;
+  document.getElementById("rrResult").textContent = `R:R 1:${rr.toFixed(2)}`;
+  document.getElementById("ComisionResult").textContent = `Comisión: $${comisionTotal.toFixed(2)}`;
+
+  document.getElementById("tpPriceResult").textContent = `Precio TP: ${tpPrice.toFixed(dec)}`;
+  document.getElementById("slPriceResult").textContent = `Precio SL: ${slPrice.toFixed(dec)}`;
+
+  document.getElementById("profitResult").textContent = `Profit Neto: $${profitNeto.toFixed(2)}`;
+  document.getElementById("lossResult").textContent = `Pérdida Neta: -$${lossNeto.toFixed(2)}`;
+
+  document.getElementById("resultCard").style.display = "block";
+  document.getElementById("tpCard").style.display = "block";
 }
 </script>
 
