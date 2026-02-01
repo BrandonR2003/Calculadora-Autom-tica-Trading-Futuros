@@ -377,7 +377,11 @@ tbody.insertAdjacentHTML("beforeend", `
   </tr>
 `);
 
-  // -------- TPS POR % REAL --------
+  // profit neto máximo permitido por el TP real
+const profitMaxPermitido =
+  (tpTics * tickValue * contratos) - comisionTotal;
+
+// -------- TPS POR % REAL --------
 for (let nivel = 1; nivel <= nivelMax; nivel++) {
   const objetivoUSD = pasoUSD * nivel;
 
@@ -385,29 +389,29 @@ for (let nivel = 1; nivel <= nivelMax; nivel++) {
     (objetivoUSD + comisionTotal) / (tickValue * contratos);
 
   const ticsBase = Math.floor(ticsExactos);
-
   let ticsObjetivo = ticsBase;
 
   const profitBase =
     (ticsBase * tickValue * contratos) - comisionTotal;
 
-  // si no alcanza el objetivo, subimos 1 tick
   if (profitBase < objetivoUSD) {
     ticsObjetivo = ticsBase + 1;
   }
 
-  // no mostrar niveles fuera del TP real
-  if (ticsObjetivo > tpTics) break;
+  const profitNetoNivel =
+    (ticsObjetivo * tickValue * contratos) - comisionTotal;
+
+  // corte correcto
+  if (profitNetoNivel > profitMaxPermitido) break;
 
   const precioTP = tipo === "buy"
     ? entrada + ticsObjetivo * tickSize
     : entrada - ticsObjetivo * tickSize;
 
-  const profitNetoNivel =
-    (ticsObjetivo * tickValue * contratos) - comisionTotal;
-
   const claseFinal =
-    ticsObjetivo === tpTics ? "tp-final-row" : "";
+    Math.abs(profitMaxPermitido - profitNetoNivel) < tickValue
+      ? "tp-final-row"
+      : "";
 
   tbody.insertAdjacentHTML("beforeend", `
     <tr class="${claseFinal}">
