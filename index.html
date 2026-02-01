@@ -326,12 +326,22 @@ function calcular() {
   const lossNeto = contratos * riesgoPorContrato;
 
   // ================================
-// TP PARCIALES (FUTUROS)
+// TP PARCIALES POR % REAL (NETO)
 // ================================
 const tbody = document.getElementById("tpTable");
 tbody.innerHTML = "";
 
-// --- BREAK EVEN REAL ---
+// Paso en USD según % seleccionado
+const pasoUSD = capital * (riesgoPct / 100);
+
+// Profit neto final según TP en tics
+const profitFinalNeto =
+  (tpTics * tickValue * contratos) - comisionTotal;
+
+// Nivel máximo (redondeado hacia arriba)
+const nivelMax = Math.ceil(profitFinalNeto / pasoUSD);
+
+// -------- BREAK EVEN REAL --------
 const ticsBE = Math.ceil(comisionTotal / (tickValue * contratos));
 const precioBE = tipo === "buy"
   ? entrada + ticsBE * tickSize
@@ -347,41 +357,33 @@ tbody.insertAdjacentHTML("beforeend", `
   </tr>
 `);
 
-// --- TPS POR R (1:1, 1:2, 1:3...) ---
-const riesgoTotal = contratos * riesgoPorContrato;
-let R = 1;
-let ultimoTic = ticsBE;
-
-while (true) {
-  const objetivoUSD = riesgoTotal * R;
+// -------- TPS POR % --------
+for (let nivel = 1; nivel <= nivelMax; nivel++) {
+  const objetivoUSD = pasoUSD * nivel;
 
   const ticsObjetivo = Math.ceil(
     (objetivoUSD + comisionTotal) / (tickValue * contratos)
   );
 
-  if (ticsObjetivo <= ultimoTic) break;
-
   const precioTP = tipo === "buy"
     ? entrada + ticsObjetivo * tickSize
     : entrada - ticsObjetivo * tickSize;
 
-  const profitNetoTP =
+  const profitNetoNivel =
     (ticsObjetivo * tickValue * contratos) - comisionTotal;
 
+  const claseFinal =
+    nivel === nivelMax ? "tp-final-row" : "";
+
   tbody.insertAdjacentHTML("beforeend", `
-    <tr>
-      <td>1:${R}</td>
-      <td>${(R * riesgoPct).toFixed(2)}%</td>
+    <tr class="${claseFinal}">
+      <td>${nivel}</td>
+      <td>${(nivel * riesgoPct).toFixed(2)}%</td>
       <td>${ticsObjetivo}</td>
       <td>${precioTP.toFixed(dec)}</td>
-      <td>$${profitNetoTP.toFixed(2)}</td>
+      <td>$${profitNetoNivel.toFixed(2)}</td>
     </tr>
   `);
-
-  ultimoTic = ticsObjetivo;
-  R++;
-
-  if (R > 10) break; // límite de seguridad
 }
 
   // --- OUTPUT ---
