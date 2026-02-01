@@ -169,6 +169,7 @@
       <label for="symbol">Activo:</label>
       <select id="symbol">
         <option value="ES">ES</option>
+        <option value="MES">MES</option>
         <option value="NQ">NQ</option>
         <option value="YM">YM</option>
         <option value="RTY">RTY</option>
@@ -284,6 +285,7 @@ function calcular() {
 
   const activos = {
     ES: { tickSize: 0.25, tickValue: 12.5, comision: { APEX: 3.10, FN: 5.76 }, dec: 2 },
+    MES: { tickSize: 0.25, tickValue: 1.25, comision: { APEX: 1.04, FN: 1.90 }, dec: 2 },
     NQ: { tickSize: 0.25, tickValue: 5, comision: { APEX: 3.10, FN: 5.76 }, dec: 2 },
     YM: { tickSize: 1, tickValue: 5, comision: { APEX: 3.10, FN: 5.76 }, dec: 0 },
     RTY:{ tickSize: 0.1, tickValue: 5, comision: { APEX: 3.10, FN: 5.76 }, dec: 1 },
@@ -322,6 +324,65 @@ function calcular() {
   const profitBruto = tpTics * tickValue * contratos;
   const profitNeto = profitBruto - comisionTotal;
   const lossNeto = contratos * riesgoPorContrato;
+
+  // ================================
+// TP PARCIALES (FUTUROS)
+// ================================
+const tbody = document.getElementById("tpTable");
+tbody.innerHTML = "";
+
+// --- BREAK EVEN REAL ---
+const ticsBE = Math.ceil(comisionTotal / (tickValue * contratos));
+const precioBE = tipo === "buy"
+  ? entrada + ticsBE * tickSize
+  : entrada - ticsBE * tickSize;
+
+tbody.insertAdjacentHTML("beforeend", `
+  <tr class="be-row">
+    <td>BE</td>
+    <td>0%</td>
+    <td>${ticsBE}</td>
+    <td>${precioBE.toFixed(dec)}</td>
+    <td>$0.00</td>
+  </tr>
+`);
+
+// --- TPS POR R (1:1, 1:2, 1:3...) ---
+const riesgoTotal = contratos * riesgoPorContrato;
+let R = 1;
+let ultimoTic = ticsBE;
+
+while (true) {
+  const objetivoUSD = riesgoTotal * R;
+
+  const ticsObjetivo = Math.ceil(
+    (objetivoUSD + comisionTotal) / (tickValue * contratos)
+  );
+
+  if (ticsObjetivo <= ultimoTic) break;
+
+  const precioTP = tipo === "buy"
+    ? entrada + ticsObjetivo * tickSize
+    : entrada - ticsObjetivo * tickSize;
+
+  const profitNetoTP =
+    (ticsObjetivo * tickValue * contratos) - comisionTotal;
+
+  tbody.insertAdjacentHTML("beforeend", `
+    <tr>
+      <td>1:${R}</td>
+      <td>${(R * riesgoPct).toFixed(2)}%</td>
+      <td>${ticsObjetivo}</td>
+      <td>${precioTP.toFixed(dec)}</td>
+      <td>$${profitNetoTP.toFixed(2)}</td>
+    </tr>
+  `);
+
+  ultimoTic = ticsObjetivo;
+  R++;
+
+  if (R > 10) break; // límite de seguridad
+}
 
   // --- OUTPUT ---
   document.getElementById("lotajeResult").textContent = `Contratos: ${contratos}`;
