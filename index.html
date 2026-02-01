@@ -381,25 +381,27 @@ tbody.insertAdjacentHTML("beforeend", `
 const profitMaxPermitido =
   (tpTics * tickValue * contratos) - comisionTotal;
 
-// -------- TPS POR % REAL (NETO) --------
+  let ticsNivelAnterior = ticsBE;
+
 for (let nivel = 1; ; nivel++) {
+
   const objetivoUSD = pasoUSD * nivel;
 
   const ticsExactos =
     (objetivoUSD + comisionTotal) / (tickValue * contratos);
 
-  const ticsBase = Math.floor(ticsExactos);
-  let ticsObjetivo = ticsBase;
+  let ticsObjetivo = Math.floor(ticsExactos);
 
   const profitBase =
-    (ticsBase * tickValue * contratos) - comisionTotal;
+    (ticsObjetivo * tickValue * contratos) - comisionTotal;
 
   if (profitBase < objetivoUSD) {
-    ticsObjetivo = ticsBase + 1;
+    ticsObjetivo++;
   }
 
-  // 🔑 CORTE CORRECTO
-  if (tpTics < ticsObjetivo) break;
+  // 🔑 REGLA REAL:
+  // si ya pasé el nivel anterior aunque sea por 1 tick
+  if (tpTics < ticsNivelAnterior + 1) break;
 
   const precioTP = tipo === "buy"
     ? entrada + ticsObjetivo * tickSize
@@ -409,7 +411,7 @@ for (let nivel = 1; ; nivel++) {
     (ticsObjetivo * tickValue * contratos) - comisionTotal;
 
   const claseFinal =
-    ticsObjetivo === tpTics ? "tp-final-row" : "";
+    ticsObjetivo <= tpTics ? "tp-final-row" : "";
 
   tbody.insertAdjacentHTML("beforeend", `
     <tr class="${claseFinal}">
@@ -420,9 +422,10 @@ for (let nivel = 1; ; nivel++) {
       <td>$${profitNetoNivel.toFixed(2)}</td>
     </tr>
   `);
+
+  // 🔑 avanzamos al siguiente umbral REAL
+  ticsNivelAnterior = ticsObjetivo;
 }
-
-
   
   // --- OUTPUT ---
   document.getElementById("lotajeResult").textContent = `Contratos: ${contratos}`;
