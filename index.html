@@ -281,42 +281,12 @@ function calcular() {
   }
 
   const activos = {
-    ES: {
-      tickSize: 0.25,
-      tickValue: 12.50,
-      comision: { APEX: 3.10, FN: 5.76 },
-      dec: 2
-    },
-    NQ: {
-      tickSize: 0.25,
-      tickValue: 5,
-      comision: { APEX: 3.10, FN: 5.76 },
-      dec: 2
-    },
-    YM: {
-      tickSize: 1,
-      tickValue: 5,
-      comision: { APEX: 3.10, FN: 5.76 },
-      dec: 0
-    },
-    RTY: {
-      tickSize: 0.1,
-      tickValue: 5,
-      comision: { APEX: 3.10, FN: 5.76 },
-      dec: 1
-    },
-    CL: {
-      tickSize: 0.01,
-      tickValue: 10,
-      comision: { APEX: 3.34, FN: 6.00 },
-      dec: 2
-    },
-    GC: {
-      tickSize: 0.1,
-      tickValue: 10,
-      comision: { APEX: 3.54, FN: 6.20 },
-      dec: 1
-    }
+    ES: { tickSize: 0.25, tickValue: 12.5, comision: { APEX: 3.10, FN: 5.76 }, dec: 2 },
+    NQ: { tickSize: 0.25, tickValue: 5, comision: { APEX: 3.10, FN: 5.76 }, dec: 2 },
+    YM: { tickSize: 1, tickValue: 5, comision: { APEX: 3.10, FN: 5.76 }, dec: 0 },
+    RTY:{ tickSize: 0.1, tickValue: 5, comision: { APEX: 3.10, FN: 5.76 }, dec: 1 },
+    CL: { tickSize: 0.01, tickValue: 10, comision:{ APEX: 3.34, FN: 6.00 }, dec: 2 },
+    GC: { tickSize: 0.1, tickValue: 10, comision:{ APEX: 3.54, FN: 6.20 }, dec: 1 }
   };
 
   const { tickSize, tickValue, comision, dec } = activos[activo];
@@ -324,14 +294,20 @@ function calcular() {
 
   const riesgoUSD = capital * (riesgoPct / 100);
   const riesgoPorContrato = (slTics * tickValue) + feePorContrato;
-  const contratos = Math.floor(riesgoUSD / riesgoPorContrato);
+
+  let contratos = Math.floor(riesgoUSD / riesgoPorContrato);
+  while ((contratos * riesgoPorContrato) > riesgoUSD) {
+    contratos--;
+  }
 
   if (contratos < 1) {
     alert("Riesgo insuficiente para 1 contrato");
     return;
   }
 
+  // --- MÉTRICAS ---
   const rr = tpTics / slTics;
+  const comisionTotal = contratos * feePorContrato;
 
   const tpPrice = tipo === "buy"
     ? entrada + tpTics * tickSize
@@ -342,12 +318,10 @@ function calcular() {
     : entrada + slTics * tickSize;
 
   const profitBruto = tpTics * tickValue * contratos;
-  const lossBruto = slTics * tickValue * contratos;
-  const comisionTotal = contratos * feePorContrato;
-
   const profitNeto = profitBruto - comisionTotal;
-  const lossNeto = lossBruto + comisionTotal;
+  const lossNeto = contratos * riesgoPorContrato;
 
+  // --- OUTPUT ---
   document.getElementById("lotajeResult").textContent = `Contratos: ${contratos}`;
   document.getElementById("rrResult").textContent = `R:R 1:${rr.toFixed(2)}`;
   document.getElementById("ComisionResult").textContent = `Comisión: $${comisionTotal.toFixed(2)}`;
