@@ -281,19 +281,49 @@ function calcular() {
   }
 
   const activos = {
-    ES: { tick: 0.25, value: 12.5, dec: 2 },
-    NQ: { tick: 0.25, value: 5, dec: 2 },
-    YM: { tick: 1, value: 5, dec: 0 },
-    RTY: { tick: 0.1, value: 5, dec: 1 },
-    CL: { tick: 0.01, value: 10, dec: 2 },
-    GC: { tick: 0.1, value: 10, dec: 1 }
+    ES: {
+      tickSize: 0.25,
+      tickValue: 12.50,
+      comision: { APEX: 3.10, FN: 5.76 },
+      dec: 2
+    },
+    NQ: {
+      tickSize: 0.25,
+      tickValue: 5,
+      comision: { APEX: 3.10, FN: 5.76 },
+      dec: 2
+    },
+    YM: {
+      tickSize: 1,
+      tickValue: 5,
+      comision: { APEX: 3.10, FN: 5.76 },
+      dec: 0
+    },
+    RTY: {
+      tickSize: 0.1,
+      tickValue: 5,
+      comision: { APEX: 3.10, FN: 5.76 },
+      dec: 1
+    },
+    CL: {
+      tickSize: 0.01,
+      tickValue: 10,
+      comision: { APEX: 3.34, FN: 6.00 },
+      dec: 2
+    },
+    GC: {
+      tickSize: 0.1,
+      tickValue: 10,
+      comision: { APEX: 3.54, FN: 6.20 },
+      dec: 1
+    }
   };
 
-  const feePorContrato = cuenta === "FN" ? 2 : 3;
-  const { tick, value, dec } = activos[activo];
+  const { tickSize, tickValue, comision, dec } = activos[activo];
+  const feePorContrato = comision[cuenta];
 
   const riesgoUSD = capital * (riesgoPct / 100);
-  const riesgoPorContrato = slTics * value + feePorContrato;
+  const riesgoPorContrato = (slTics * tickValue) + feePorContrato;
   const contratos = Math.floor(riesgoUSD / riesgoPorContrato);
 
   if (contratos < 1) {
@@ -304,15 +334,15 @@ function calcular() {
   const rr = tpTics / slTics;
 
   const tpPrice = tipo === "buy"
-    ? entrada + tpTics * tick
-    : entrada - tpTics * tick;
+    ? entrada + tpTics * tickSize
+    : entrada - tpTics * tickSize;
 
   const slPrice = tipo === "buy"
-    ? entrada - slTics * tick
-    : entrada + slTics * tick;
+    ? entrada - slTics * tickSize
+    : entrada + slTics * tickSize;
 
-  const profitBruto = tpTics * value * contratos;
-  const lossBruto = slTics * value * contratos;
+  const profitBruto = tpTics * tickValue * contratos;
+  const lossBruto = slTics * tickValue * contratos;
   const comisionTotal = contratos * feePorContrato;
 
   const profitNeto = profitBruto - comisionTotal;
