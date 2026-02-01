@@ -341,8 +341,28 @@ const profitFinalNeto =
 // Nivel máximo (redondeado hacia arriba)
 const nivelMax = Math.ceil(profitFinalNeto / pasoUSD);
 
-// -------- BREAK EVEN REAL --------
-const ticsBE = Math.ceil(comisionTotal / (tickValue * contratos));
+// --- BE REAL ÓPTIMO ---
+const ticsExactosBE =
+  comisionTotal / (tickValue * contratos);
+
+const ticsBaseBE = Math.floor(ticsExactosBE);
+
+let ticsBE = ticsBaseBE;
+
+const profitBaseBE =
+  (ticsBaseBE * tickValue * contratos) - comisionTotal;
+
+// si queda negativo, subimos 1 tick
+if (profitBaseBE < 0) {
+  ticsBE = ticsBaseBE + 1;
+}
+
+// seguridad extra
+ticsBE = Math.max(ticsBE, 0);
+
+const profitBE =
+  (ticsBE * tickValue * contratos) - comisionTotal;
+
 const precioBE = tipo === "buy"
   ? entrada + ticsBE * tickSize
   : entrada - ticsBE * tickSize;
@@ -350,32 +370,34 @@ const precioBE = tipo === "buy"
 tbody.insertAdjacentHTML("beforeend", `
   <tr class="be-row">
     <td>BE</td>
-    <td>0%</td>
+    <td>${((profitBE / capital) * 100).toFixed(2)}%</td>
     <td>${ticsBE}</td>
     <td>${precioBE.toFixed(dec)}</td>
-    <td>$0.00</td>
+    <td>$${profitBE.toFixed(2)}</td>
   </tr>
 `);
 
-// -------- TPS POR % --------
+  // -------- TPS POR % REAL --------
 for (let nivel = 1; nivel <= nivelMax; nivel++) {
   const objetivoUSD = pasoUSD * nivel;
 
   const ticsExactos =
-  (objetivoUSD + comisionTotal) / (tickValue * contratos);
+    (objetivoUSD + comisionTotal) / (tickValue * contratos);
 
-const ticsBase = Math.floor(ticsExactos);
+  const ticsBase = Math.floor(ticsExactos);
 
-// probamos como máximo +1 tick
-let ticsObjetivo = ticsBase;
+  let ticsObjetivo = ticsBase;
 
-const profitBase =
-  (ticsBase * tickValue * contratos) - comisionTotal;
+  const profitBase =
+    (ticsBase * tickValue * contratos) - comisionTotal;
 
-if (profitBase < objetivoUSD) {
-  ticsObjetivo = ticsBase + 1;
-}
+  // si no alcanza el objetivo, subimos 1 tick
+  if (profitBase < objetivoUSD) {
+    ticsObjetivo = ticsBase + 1;
+  }
 
+  // no mostrar niveles fuera del TP real
+  if (ticsObjetivo > tpTics) break;
 
   const precioTP = tipo === "buy"
     ? entrada + ticsObjetivo * tickSize
@@ -385,7 +407,7 @@ if (profitBase < objetivoUSD) {
     (ticsObjetivo * tickValue * contratos) - comisionTotal;
 
   const claseFinal =
-    nivel === nivelMax ? "tp-final-row" : "";
+    ticsObjetivo === tpTics ? "tp-final-row" : "";
 
   tbody.insertAdjacentHTML("beforeend", `
     <tr class="${claseFinal}">
@@ -398,6 +420,7 @@ if (profitBase < objetivoUSD) {
   `);
 }
 
+  
   // --- OUTPUT ---
   document.getElementById("lotajeResult").textContent = `Contratos: ${contratos}`;
   document.getElementById("rrResult").textContent = `R:R 1:${rr.toFixed(2)}`;
