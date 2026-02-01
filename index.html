@@ -361,9 +361,21 @@ tbody.insertAdjacentHTML("beforeend", `
 for (let nivel = 1; nivel <= nivelMax; nivel++) {
   const objetivoUSD = pasoUSD * nivel;
 
-  const ticsObjetivo = Math.ceil(
-    (objetivoUSD + comisionTotal) / (tickValue * contratos)
-  );
+  const ticsExactos =
+  (objetivoUSD + comisionTotal) / (tickValue * contratos);
+
+const ticsBase = Math.floor(ticsExactos);
+
+// probamos como máximo +1 tick
+let ticsObjetivo = ticsBase;
+
+const profitBase =
+  (ticsBase * tickValue * contratos) - comisionTotal;
+
+if (profitBase < objetivoUSD) {
+  ticsObjetivo = ticsBase + 1;
+}
+
 
   const precioTP = tipo === "buy"
     ? entrada + ticsObjetivo * tickSize
