@@ -179,7 +179,7 @@
 
 
       <label for="comision">Tipo de Cuenta:</label>
-      <select id="comision">
+     <select id="comision" onchange="actualizarActivos()">
         <option value="FN">FN Futures</option>
         <option value="APEX">Apex</option>
       </select>
@@ -268,6 +268,37 @@
   </div>
 
 <script>
+
+  const activosPorCuenta = {
+  FN: ["ES", "MES", "YM", "RTY", "CL", "GC"],
+  APEX: ["ES", "MES", "NQ", "YM", "RTY", "CL", "GC"]
+};
+
+  function actualizarActivos() {
+  const cuenta = document.getElementById("comision").value;
+  const selectActivo = document.getElementById("symbol");
+    
+  const activosPermitidos = activosPorCuenta[cuenta];
+
+  // guardamos el activo actual
+  const activoActual = selectActivo.value;
+
+  // limpiamos el select
+  selectActivo.innerHTML = "";
+
+  activosPermitidos.forEach(activo => {
+    const option = document.createElement("option");
+    option.value = activo;
+    option.textContent = activo;
+    selectActivo.appendChild(option);
+  });
+
+  // si el activo anterior sigue siendo válido, lo conservamos
+  if (activosPermitidos.includes(activoActual)) {
+    selectActivo.value = activoActual;
+  }
+}
+
 function calcular() {
   const capital = parseFloat(document.getElementById("capital").value);
   const riesgoPct = parseFloat(document.getElementById("riesgo").value);
@@ -278,6 +309,11 @@ function calcular() {
   const activo = document.getElementById("symbol").value;
   const cuenta = document.getElementById("comision").value;
 
+  if (!activosPorCuenta[cuenta].includes(activo)) {
+  alert("Este activo no está disponible para la cuenta seleccionada");
+  return;
+}
+  
   if (!slTics || !tpTics || slTics <= 0) {
     alert("TP y SL inválidos");
     return;
@@ -453,6 +489,8 @@ if (ultimaFila) {
   document.getElementById("resultCard").style.display = "block";
   document.getElementById("tpCard").style.display = "block";
 }
+
+  window.onload = actualizarActivos;
 </script>
 
 </body>
