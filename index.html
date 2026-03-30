@@ -411,13 +411,8 @@ function calcular() {
   const feePorContrato = comision[cuenta];
 
   const riesgoUSD = capital * (riesgoPct / 100);
-  const riesgoPorContrato = slTics * tickValue;
+  const riesgoPorContrato = (slTics * tickValue) + feePorContrato;
   let contratos = Math.floor(riesgoUSD / riesgoPorContrato);
-
-
-  while ((contratos * riesgoPorContrato) > riesgoUSD) {
-    contratos--;
-  }
 
   if (contratos < 1) {
     alert("Riesgo insuficiente para 1 contrato");
