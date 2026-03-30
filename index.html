@@ -411,9 +411,10 @@ function calcular() {
   const feePorContrato = comision[cuenta];
 
   const riesgoUSD = capital * (riesgoPct / 100);
-  const riesgoPorContrato = (slTics * tickValue) + feePorContrato;
-
+  const riesgoPorContrato = slTics * tickValue;
   let contratos = Math.floor(riesgoUSD / riesgoPorContrato);
+
+
   while ((contratos * riesgoPorContrato) > riesgoUSD) {
     contratos--;
   }
@@ -437,7 +438,8 @@ function calcular() {
 
   const profitBruto = tpTics * tickValue * contratos;
   const profitNeto = profitBruto - comisionTotal;
-  const lossNeto = contratos * riesgoPorContrato;
+  const lossBruto = slTics * tickValue * contratos;
+  const lossNeto = lossBruto + comisionTotal;
 
   // ================================
 // TP PARCIALES POR % REAL (NETO)
