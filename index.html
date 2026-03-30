@@ -248,26 +248,26 @@
 
       <label for="riesgo">Riesgo (%):</label>
       <select id="riesgo">
-        <option value="1">1%</option>
-        <option value="0.95">0.95%</option>
-        <option value="0.90">0.90%</option>
-        <option value="0.85">0.85%</option>
-        <option value="0.80">0.80%</option>
-        <option value="0.75">0.75%</option>
-        <option value="0.70">0.70%</option>
-        <option value="0.65">0.65%</option>
-        <option value="0.60">0.60%</option>
-        <option value="0.55">0.55%</option>
-        <option value="0.50">0.50%</option>
-        <option value="0.45">0.45%</option>
-        <option value="0.40">0.40%</option>
-        <option value="0.35">0.35%</option>
-        <option value="0.30">0.30%</option>
-        <option value="0.25">0.25%</option>
-        <option value="0.20">0.20%</option>
-        <option value="0.15">0.15%</option>
-        <option value="0.10">0.10%</option>
-        <option value="0.05">0.05%</option>
+        <option value="0.01">1%</option>
+        <option value="0.0095">0.95%</option>
+        <option value="0.0090">0.90%</option>
+        <option value="0.0085">0.85%</option>
+        <option value="0.0080">0.80%</option>
+        <option value="0.0075">0.75%</option>
+        <option value="0.0070">0.70%</option>
+        <option value="0.0065">0.65%</option>
+        <option value="0.0060">0.60%</option>
+        <option value="0.0055">0.55%</option>
+        <option value="0.0050">0.50%</option>
+        <option value="0.0045">0.45%</option>
+        <option value="0.0040">0.40%</option>
+        <option value="0.0035">0.35%</option>
+        <option value="0.0030">0.30%</option>
+        <option value="0.0025">0.25%</option>
+        <option value="0.0020">0.20%</option>
+        <option value="0.0015">0.15%</option>
+        <option value="0.001">0.10%</option>
+        <option value="0.0005">0.05%</option>
       </select>
 
       <button onclick="calcular()">Calcular</button>
@@ -410,7 +410,7 @@ function calcular() {
   const { tickSize, tickValue, comision, dec } = activos[activo];
   const feePorContrato = comision[cuenta];
 
-  const riesgoUSD = capital * (riesgoPct / 100);
+  const riesgoUSD = capital * riesgoPct
   const riesgoPorContrato = (slTics * tickValue) + feePorContrato;
   let contratos = Math.floor(riesgoUSD / riesgoPorContrato);
 
